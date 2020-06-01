@@ -1,0 +1,45 @@
+---
+
+- id: 3f888ff4-45a4-47b4-a256-82930e0a012a
+  name: Read hosts file
+  description: Get IPv4 addresses and hostnames from the hosts file
+  tactic: discovery
+  technique:
+    attack_id: T1018
+    name: Remote System Discovery
+  platforms:
+    darwin:
+      sh:
+        command: |
+          cat /etc/hosts
+        parsers:
+          plugins.stockpile.app.parsers.etc_hosts:
+            - source: remote.host.ip
+              edge: has_hostname
+              target: remote.host.fqdn
+    windows:
+      psh:
+        command: |
+          Get-Content "C:\Windows\System32\Drivers\etc\hosts"
+        parsers:
+          plugins.stockpile.app.parsers.etc_hosts:
+            - source: remote.host.ip
+              edge: has_hostname
+              target: remote.host.fqdn
+      cmd:
+        command: |
+          type "C:\Windows\System32\Drivers\etc\hosts"
+        parsers:
+          plugins.stockpile.app.parsers.etc_hosts:
+            - source: remote.host.ip
+              edge: has_hostname
+              target: remote.host.fqdn
+    linux:
+      sh:
+        command: |
+          cat /etc/hosts
+        parsers:
+          plugins.stockpile.app.parsers.etc_hosts:
+            - source: remote.host.ip
+              edge: has_hostname
+              target: remote.host.fqdn
