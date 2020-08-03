@@ -1,0 +1,14 @@
+---
+
+- id: 614f40cd-081d-4ced-bfc4-c40ff358d67f
+  name: Scheduled Tasks
+  description: List locally scheduled tasks
+  tactic: discovery
+  technique: 
+    attack_id: 1053.005
+    name: Scheduled Task/Job
+  platforms:
+    windows:
+      cmd,psh:
+        command: |
+          schtasks
