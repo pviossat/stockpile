@@ -1,0 +1,17 @@
+---
+
+- id: 00fef197-1806-4b11-8427-228807e82938
+  name: Remote System Discovery - Login Server
+  description: Display the AD login server of the workstation
+  tactic: discovery
+  technique:
+    attack_id: T1018
+    name: Remote System Discovery
+  platforms:
+    windows:
+      cmd:
+        command: |
+          echo %LOGONSERVER%
+      psh:
+        command: |
+          $env:LOGONSERVER
