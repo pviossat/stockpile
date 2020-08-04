@@ -1,0 +1,22 @@
+---
+
+- id: 6ae3f344-b230-4099-8409-03beb7b2244b
+  name: Remote System Discovery - net group Domain Controllers
+  description: 'Identify remote systems with net.exe querying the Active Directory
+    Domain Controllers group.
+
+
+    Upon successful execution, cmd.exe will execute cmd.exe against Active Directory
+    to list the "Domain Controllers" group. Output will be via stdout.
+
+    '
+  platforms:
+    windows:
+      cmd:
+        cleanup: ''
+        command: net group "Domain Controllers" /domain
+        payloads: []
+  tactic: discovery
+  technique:
+    attack_id: T1018
+    name: Remote System Discovery
