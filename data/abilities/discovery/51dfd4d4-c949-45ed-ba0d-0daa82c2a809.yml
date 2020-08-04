@@ -1,0 +1,19 @@
+---
+
+- id: 51dfd4d4-c949-45ed-ba0d-0daa82c2a809
+  name: List Environment Variables
+  description: List environment variables and their values
+  tactic: discovery
+  technique:
+    attack_id: T1082
+    name: System Information Discovery
+  platforms:
+    windows:
+      cmd:
+        command: |
+          set
+        cleanup: ""
+      psh:
+        command: |
+          Get-ChildItem env:
+        cleanup: ""
