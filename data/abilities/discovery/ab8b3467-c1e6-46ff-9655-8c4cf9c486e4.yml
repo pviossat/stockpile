@@ -1,0 +1,16 @@
+---
+
+- id: ab8b3467-c1e6-46ff-9655-8c4cf9c486e4
+  name: Terminal Services Check via registry query
+  description:
+  tactic: discovery
+  technique:
+    attack_id: T1012
+    name: Query Registry
+  platforms:
+    windows:
+      cmd:
+        command: |
+          reg query "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections
+        cleanup: ""
+
