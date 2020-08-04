@@ -1,0 +1,15 @@
+---
+
+- id: 459675cc-ce0c-4b4b-8fdb-587b93aa0582
+  name: User and privilege discovery
+  description: Get current user information, SID, domain, groups the user belongs to, security privs of the user
+  tactic: discovery
+  technique:
+    attack_id: T1033
+    name: User discovery
+  platforms:
+    windows:
+      cmd:
+        command: |
+          whoami /all /fo list
+        cleanup: ""
