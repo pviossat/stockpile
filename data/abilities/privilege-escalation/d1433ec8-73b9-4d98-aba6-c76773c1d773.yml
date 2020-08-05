@@ -1,0 +1,16 @@
+---
+
+- id: d1433ec8-73b9-4d98-aba6-c76773c1d773
+  name: PowerShellMafia - PowerUp
+  description: Test for various privilege escalation
+  tactic: privilege-escalation
+  technique:
+    attack_id: T1068
+    name: Exploitation for Privilege Escalation
+  platforms:
+    windows:
+      psh:
+        command: |
+          .\PowerUp.ps1
+        payload:
+        - PowerUp.ps1
