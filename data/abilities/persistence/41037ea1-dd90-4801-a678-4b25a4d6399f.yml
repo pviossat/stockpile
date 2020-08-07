@@ -16,3 +16,4 @@
         cleanup: |
           REG DELETE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" /f;
           REG RESTORE "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe" sethc_hive;
+  privilege: Elevated
