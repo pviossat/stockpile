@@ -17,5 +17,6 @@
           net start TermService
         cleanup: |
           net stop TermService;
-          REG RESTORE "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" terminal_server_hive
+          REG RESTORE "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" terminal_server_hive;
+          del terminal_server_hive
   privilege: Elevated
