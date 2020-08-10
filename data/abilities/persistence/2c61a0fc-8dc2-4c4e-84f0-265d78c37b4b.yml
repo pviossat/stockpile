@@ -13,7 +13,9 @@
         command: |
           REG SAVE "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" terminal_server_hive;
           REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server\Winstations\RDP-Tcp" /v UserAuthentication /t REG_DWORD /d 0 /f;
-          REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+          REG ADD "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f;
+          net start TermService
         cleanup: |
+          net stop TermService;
           REG RESTORE "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" terminal_server_hive
   privilege: Elevated
