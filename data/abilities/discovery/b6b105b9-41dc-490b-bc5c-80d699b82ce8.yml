@@ -12,3 +12,13 @@
       psh:
         command: |
           [environment]::OSVersion.Version
+      cmd:
+        command: |
+          ver
+    linux:
+      sh:
+        cat /etc/os-release
+    darwin:
+      sh:
+        command: |
+          sw_vers -productVersion
