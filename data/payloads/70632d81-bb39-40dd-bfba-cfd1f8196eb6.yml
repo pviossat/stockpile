@@ -22,6 +22,12 @@ standard_payloads:
     description: Invoke reflective PE injection script
     id: 37e61603-fb0a-48c4-ae9b-f6542c6b1221
     xored: true
+  Invoke-SMBClient.ps1:
+    description: Invoke SMB Client for pass the hash
+    id: 83eba1cc-912c-4ad0-8774-d3be15d05c94
+  Invoke-SMBClient.ps1:
+    description: Invoke SMB Exec for pass the hash
+    id: f640f923-cb5f-472d-8aea-486433a9596b
   bookmark.scpt:
     description: Unknown
     id: c354cac4-ac7c-4512-8a52-5faf880883bf
@@ -35,6 +41,9 @@ standard_payloads:
     description: Invoke katz script
     id: c1e0dda5-1f10-4895-a963-261404bae5f8
     xored: true
+  mimikatz.exe:
+    description: Compiled mimikatz
+    id: aa3b5b43-aa26-4035-bd4d-5063f9e0da19
   minidump.exe:
     description: Compiled minidump.go binary for dumping LSASS memory
     id: 61174873-e8f8-486d-9f9f-12884370dde7

@@ -19,7 +19,11 @@
               json_type: str
           - source: domain.ad.name
             custom_parser_vals:
-              json_key: Name
+              json_key: RootDomain
+              json_type: str
+          - source: domain.ad.controller
+            custom_parser_vals:
+              json_key: GlobalCatalogs
               json_type: str
         payloads:
         - powerview.ps1

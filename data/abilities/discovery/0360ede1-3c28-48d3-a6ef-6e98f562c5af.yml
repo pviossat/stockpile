@@ -1,5 +1,5 @@
 - id: 0360ede1-3c28-48d3-a6ef-6e98f562c5af
-  name: GetComputers (Alice)
+  name: GetComputers
   description: Get a list of all computers in a domain
   tactic: discovery
   technique:
@@ -10,6 +10,16 @@
       psh:
         command: |
           Import-Module .\PowerView.ps1 -Force;
-          Get-NetComputer
+          Get-NetComputer | ConvertTo-JSON;
         payloads:
         - powerview.ps1
+        parsers:
+          plugins.stockpile.app.parsers.json:
+          - source: domain.computer.name
+            custom_parser_vals:
+              json_key: name
+              json_type: str
+          - source: domain.computer.dnshostname
+            custom_parser_vals:
+              json_key: dnshostname
+              json_type: str
